@@ -7,12 +7,12 @@ use function Pest\Laravel\postJson;
 it('should be able to login with valid credentials', function () {
     $user = User::factory()->create();
 
-    $request = postJson('/api/login', [
+    $response = postJson('/api/login', [
         'email'    => $user->email,
         'password' => 'password@123',
     ]);
 
-    $request->assertOk()
+    $response->assertOk()
         ->assertJsonStructure([
             'user' => ['id', 'name', 'email'],
             'token',
@@ -22,12 +22,12 @@ it('should be able to login with valid credentials', function () {
 it('should not login with wrong password', function () {
     $user = User::factory()->create();
 
-    $request = postJson('/api/login', [
+    $response = postJson('/api/login', [
         'email'    => $user->email,
         'password' => 'senhaerrada',
     ]);
 
-    $request->assertStatus(401)
+    $response->assertStatus(401)
         ->assertJson([
             'status'  => 'error',
             'message' => 'Credenciais inválidas.',
@@ -35,10 +35,10 @@ it('should not login with wrong password', function () {
 });
 
 it('should not login with non-existent email', function () {
-    $request = postJson('/api/login', [
+    $response = postJson('/api/login', [
         'email'    => 'naoexiste@gmail.com',
         'password' => 'password@123',
     ]);
 
-    $request->assertStatus(401);
+    $response->assertStatus(401);
 });

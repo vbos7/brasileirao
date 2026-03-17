@@ -9,7 +9,7 @@ it('should be able to register a new user', function () {
     $user = User::factory()->make();
 
     // rota de registro
-    $request = postJson('/api/register', [
+    $response = postJson('/api/register', [
         'name'                  => $user->name,
         'email'                 => $user->email,
         'password'              => 'password@123',
@@ -17,7 +17,7 @@ it('should be able to register a new user', function () {
     ]);
 
     // verifica que a API retornou 201 e o JSON tem a estrutura esperada
-    $request->assertStatus(201)
+    $response->assertStatus(201)
         ->assertJsonStructure([
             'user' => ['id', 'name', 'email'],
             'token', // token Sanctum para autenticação
@@ -34,7 +34,7 @@ it('should not register with duplicate email', function () {
     // cria um usuário que persiste no banco
     $existing = User::factory()->create();
 
-    $request = postJson('/api/register', [
+    $response = postJson('/api/register', [
         'name'                  => fake()->name(),
         'email'                 => $existing->email,
         'password'              => 'password@123',
@@ -42,12 +42,12 @@ it('should not register with duplicate email', function () {
     ]);
 
     // validação deve rejeitar email duplicado
-    $request->assertStatus(422);
+    $response->assertStatus(422);
 });
 
 it('should not register without required fields', function () {
-    $request = postJson('/api/register', []);
+    $response = postJson('/api/register', []);
 
-    $request->assertStatus(422)
+    $response->assertStatus(422)
         ->assertJsonValidationErrors(['name', 'email', 'password']);
 });

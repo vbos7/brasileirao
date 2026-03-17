@@ -9,4 +9,9 @@ Route::post('/login', LoginController::class);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', LogoutController::class);
     Route::get('/user', fn () => request()->user());
+
+    // rotas acessíveis apenas por administradores
+    Route::middleware('admin')->prefix('admin')->group(function () {
+        Route::get('/test', fn () => response()->json(['message' => 'ok']));
+    });
 });

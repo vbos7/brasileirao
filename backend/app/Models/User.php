@@ -28,6 +28,12 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    // verifica se o usuário tem papel de administrador
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
     protected function casts(): array
     {
         return [
