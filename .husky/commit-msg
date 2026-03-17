@@ -1,0 +1,24 @@
+#!/usr/bin/env sh
+
+commit_msg=$(cat "$1")
+
+# Regex para Conventional Commits
+pattern="^(feat|fix|docs|style|refactor|perf|test|chore|ci|build|revert)(\(.+\))?: .{1,}"
+
+if ! echo "$commit_msg" | grep -Eq "$pattern"; then
+    echo "❌ Commit rejeitado! Use Conventional Commits:"
+    echo ""
+    echo "  feat: nova funcionalidade"
+    echo "  fix: correção de bug"
+    echo "  docs: documentação"
+    echo "  test: adição/correção de testes"
+    echo "  refactor: refatoração"
+    echo "  chore: tarefas gerais"
+    echo ""
+    echo "  Exemplo: feat(auth): implementar login com JWT"
+    echo ""
+    echo "  Seu commit: \"$commit_msg\""
+    exit 1;
+fi;
+
+exit 0;
