@@ -17,7 +17,7 @@ if [ $? -ne 0 ]; then
 fi;
 
 # Pint nos arquivos staged
-STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep "\.php$") || true
+STAGED_FILES=$(git diff --cached --name-only --relative --diff-filter=ACM | grep "\.php$") || true
 for FILE in $STAGED_FILES
 do
     ./vendor/bin/pint "${FILE}" > /dev/null 2>&1;
