@@ -8,7 +8,7 @@ it('should be able to login with valid credentials', function () {
     $user = User::factory()->create();
 
     $request = postJson('/api/login', [
-        'email' => $user->email,
+        'email'    => $user->email,
         'password' => 'password@123',
     ]);
 
@@ -23,20 +23,20 @@ it('should not login with wrong password', function () {
     $user = User::factory()->create();
 
     $request = postJson('/api/login', [
-        'email' => $user->email,
+        'email'    => $user->email,
         'password' => 'senhaerrada',
     ]);
 
     $request->assertStatus(401)
         ->assertJson([
-            'status' => 'error',
+            'status'  => 'error',
             'message' => 'Credenciais inválidas.',
         ]);
 });
 
 it('should not login with non-existent email', function () {
     $request = postJson('/api/login', [
-        'email' => 'naoexiste@gmail.com',
+        'email'    => 'naoexiste@gmail.com',
         'password' => 'password@123',
     ]);
 

@@ -2,8 +2,7 @@
 
 use App\Models\User;
 
-use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Laravel\postJson;
+use function Pest\Laravel\{assertDatabaseHas, postJson};
 
 it('should be able to register a new user', function () {
     // cria um uusário em memória sem persistir no banco
@@ -11,9 +10,9 @@ it('should be able to register a new user', function () {
 
     // rota de registro
     $request = postJson('/api/register', [
-        'name' => $user->name,
-        'email' => $user->email,
-        'password' => 'password@123',
+        'name'                  => $user->name,
+        'email'                 => $user->email,
+        'password'              => 'password@123',
         'password_confirmation' => 'password@123',
     ]);
 
@@ -27,7 +26,7 @@ it('should be able to register a new user', function () {
     // verifica que o usuário foi salvo no banco com o role padrão
     assertDatabaseHas('users', [
         'email' => $user->email,
-        'role' => 'user',
+        'role'  => 'user',
     ]);
 });
 
@@ -36,9 +35,9 @@ it('should not register with duplicate email', function () {
     $existing = User::factory()->create();
 
     $request = postJson('/api/register', [
-        'name' => fake()->name(),
-        'email' => $existing->email,
-        'password' => 'password@123',
+        'name'                  => fake()->name(),
+        'email'                 => $existing->email,
+        'password'              => 'password@123',
         'password_confirmation' => 'password@123',
     ]);
 
