@@ -10,38 +10,22 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class TeamFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
-        static $teams = [
-            ['name' => 'Corinthians',    'short_name' => 'COR'],
-            ['name' => 'São Paulo',       'short_name' => 'SAO'],
-            ['name' => 'Palmeiras',       'short_name' => 'PAL'],
-            ['name' => 'Fluminense',      'short_name' => 'FLU'],
-            ['name' => 'Bahia',           'short_name' => 'BAH'],
-            ['name' => 'Flamengo',        'short_name' => 'FLA'],
-            ['name' => 'Coritiba',        'short_name' => 'CFC'],
-            ['name' => 'Grêmio',          'short_name' => 'GRE'],
-            ['name' => 'RB Bragantino',   'short_name' => 'RBB'],
-            ['name' => 'Athletico',       'short_name' => 'CAP'],
-            ['name' => 'Vitória',         'short_name' => 'VIT'],
-            ['name' => 'Chapecoense',     'short_name' => 'CHP'],
-            ['name' => 'Mirassol',        'short_name' => 'MIR'],
-            ['name' => 'Santos',          'short_name' => 'SAN'],
-            ['name' => 'Vasco',           'short_name' => 'VAS'],
-            ['name' => 'Atlético-MG',     'short_name' => 'CAM'],
-            ['name' => 'Botafogo',        'short_name' => 'BOT'],
-            ['name' => 'Remo',            'short_name' => 'REM'],
-            ['name' => 'Cruzeiro',        'short_name' => 'CRU'],
-            ['name' => 'Internacional',   'short_name' => 'INT'],
-        ];
-
-        // remove o time já utilizado para evitar duplicatas ao criar múltiplos
+        // carrega a lista oficial do Brasileirão a partir do arquivo de dados
+        // array_shift garante que cada chamada retorna um time diferente (sem duplicatas)
         // se a lista acabar, usa faker para não quebrar testes que criam muitos times
+        static $teams = null;
+
+        if ($teams === null) {
+            $json  = file_get_contents(database_path('data/brasileirao_teams.json'));
+            $data  = json_decode($json, true);
+            $teams = $data['teams'];
+
+            // Corinthians sempre primeiro — testes dependem dessa ordem
+            usort($teams, fn ($a, $b) => $a['name'] === 'Corinthians' ? -1 : ($b['name'] === 'Corinthians' ? 1 : 0));
+        }
+
         if (!empty($teams)) {
             return array_shift($teams);
         }
