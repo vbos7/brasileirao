@@ -137,15 +137,16 @@ it('admin should be able to list games with pagination', function () {
 
 it('should filter games by team name', function () {
     $admin = User::factory()->create(['role' => 'admin']);
-    $cor   = Team::factory()->create(['name' => 'Corinthians']);
-    $sao   = Team::factory()->create(['name' => 'São Paulo']);
-    $pal   = Team::factory()->create(['name' => 'Palmeiras']);
+    // factory retorna Corinthians primeiro, São Paulo segundo, Palmeiras terceiro
+    $cor = Team::factory()->create();
+    $sao = Team::factory()->create();
+    $pal = Team::factory()->create();
 
     Game::factory()->create(['home_team_id' => $cor->id, 'away_team_id' => $sao->id]);
     Game::factory()->create(['home_team_id' => $pal->id, 'away_team_id' => $sao->id]);
 
     $response = actingAs($admin)
-        ->getJson('/api/admin/games?team=Corinthians');
+        ->getJson('/api/admin/games?team=' . urlencode($cor->name));
 
     $response->assertOk();
     expect($response->json('data'))->toHaveCount(1);
