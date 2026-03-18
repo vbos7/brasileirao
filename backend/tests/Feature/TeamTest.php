@@ -22,7 +22,7 @@ it('admin should be able to create a team', function () {
 
 it('should not create a team with duplicate name', function () {
     $admin = User::factory()->create(['role' => 'admin']);
-    $team  = Team::factory()->create(['name' => 'Corinthians']);
+    $team  = Team::factory()->create();
 
     $response = actingAs($admin)
         ->postJson('/api/admin/teams', [
