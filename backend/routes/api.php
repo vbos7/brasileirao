@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\{GameController, TeamController};
-use App\Http\Controllers\Auth\{LoginController, LogoutController, RegisterController};
+use App\Http\Controllers\Auth\{LoginController, LogoutController, RefreshTokenController, RegisterController};
 use App\Http\Controllers\{ProfileController, StandingsController};
 use Illuminate\Support\Facades\Route;
 
@@ -11,6 +11,7 @@ Route::get('/standings', StandingsController::class);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', LogoutController::class);
+    Route::post('/refresh', RefreshTokenController::class);
     Route::get('/user', fn () => request()->user());
     Route::put('/profile', ProfileController::class);
 
