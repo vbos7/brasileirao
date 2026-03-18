@@ -41,8 +41,14 @@ class TeamFactory extends Factory
         ];
 
         // remove o time já utilizado para evitar duplicatas ao criar múltiplos
-        $team = array_shift($teams);
+        // se a lista acabar, usa faker para não quebrar testes que criam muitos times
+        if (!empty($teams)) {
+            return array_shift($teams);
+        }
 
-        return $team;
+        return [
+            'name'       => fake()->unique()->city() . ' FC',
+            'short_name' => strtoupper(fake()->lexify('???')),
+        ];
     }
 }
