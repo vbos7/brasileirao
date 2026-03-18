@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Admin\{GameController, TeamController};
 use App\Http\Controllers\Auth\{LoginController, LogoutController, RegisterController};
-use App\Http\Controllers\StandingsController;
+use App\Http\Controllers\{ProfileController, StandingsController};
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', RegisterController::class);
@@ -12,6 +12,7 @@ Route::get('/standings', StandingsController::class);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', LogoutController::class);
     Route::get('/user', fn () => request()->user());
+    Route::put('/profile', ProfileController::class);
 
     // rotas acessíveis apenas por administradores
     Route::middleware('admin')->prefix('admin')->group(function () {
