@@ -6,35 +6,31 @@ import { useRouter, usePathname } from "next/navigation";
 import Cookies from "js-cookie";
 import api from "@/lib/api";
 import { User } from "@/types";
-import { buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
+    DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+    Shield,
+    Swords,
+    User as UserIcon,
+    LogOut,
+    Settings,
+    Menu,
+} from "lucide-react";
 
-function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
-    const pathname = usePathname();
-    const isActive = pathname === href;
-
-    return (
-        <Link
-            href={href}
-            className={`text-sm transition-colors hover:text-foreground ${
-                isActive ? "text-foreground font-medium" : "text-muted-foreground"
-            }`}
-        >
-            {children}
-        </Link>
-    );
-}
+const AUTH_ROUTES = ["/login", "/register"];
 
 export default function Navbar() {
     const router = useRouter();
     const pathname = usePathname();
     const [user, setUser] = useState<User | null>(null);
+    const [mobileOpen, setMobileOpen] = useState(false);
 
     useEffect(() => {
         function syncUser() {
@@ -50,7 +46,9 @@ export default function Navbar() {
         syncUser();
         window.addEventListener("user-updated", syncUser);
         return () => window.removeEventListener("user-updated", syncUser);
-    }, [pathname]);
+    }, []);
+
+    if (AUTH_ROUTES.includes(pathname)) return null;
 
     async function handleLogout() {
         try {
@@ -62,53 +60,114 @@ export default function Navbar() {
         router.push("/login");
     }
 
-    return (
-        <nav className="border-b bg-background">
-            <div className="mx-auto max-w-5xl flex items-center justify-between h-14 px-4">
-                <div className="flex items-center gap-6">
-                    <Link href="/" className="font-bold text-lg">
-                        Brasileirão
+    function isActive(path: string) {
+        return pathname === path;
+    }
+
+    const linkClass = (path: string) =>
+        `flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground ${
+            isActive(path) ? "bg-accent/50 text-accent-foreground" : "text-muted-foreground"
+        }`;
+
+    const navLinks = (
+        <>
+            <Link href="/" className={linkClass("/")}>
+                Classificação
+            </Link>
+            {user?.role === "admin" && (
+                <>
+                    <Link href="/admin/teams" className={linkClass("/admin/teams")}>
+                        Times
                     </Link>
-                    <NavLink href="/">Classificação</NavLink>
-                    {user?.role === "admin" && (
-                        <>
-                            <NavLink href="/admin/teams">Times</NavLink>
-                            <NavLink href="/admin/games">Jogos</NavLink>
-                        </>
-                    )}
+                    <Link href="/admin/games" className={linkClass("/admin/games")}>
+                        Jogos
+                    </Link>
+                </>
+            )}
+        </>
+    );
+
+    return (
+        <header className="bg-card sticky top-0 z-50 border-b">
+            <div className="mx-auto flex max-w-5xl items-center justify-between gap-6 px-4 py-3 sm:px-6">
+                {/* Logo + mobile menu */}
+                <div className="flex items-center gap-4">
+                    <Button
+                        variant="outline"
+                        size="icon"
+                        className="inline-flex xl:hidden"
+                        onClick={() => setMobileOpen(!mobileOpen)}
+                    >
+                        <Menu className="size-4" />
+                        <span className="sr-only">Menu</span>
+                    </Button>
+                    <Link href="/" className="flex items-center gap-2">
+                        <img src="/logo.png" alt="Brasileirão" className="size-6" />
+                        <span className="hidden text-xl font-semibold sm:block">
+              Brasileirão
+            </span>
+                    </Link>
                 </div>
 
-                <div className="flex items-center gap-4">
+                {/* Nav desktop */}
+                <nav className="hidden flex-1 items-center gap-1 xl:flex">
+                    {navLinks}
+                </nav>
+
+                {/* Right side */}
+                <div className="flex items-center gap-1.5">
                     {user ? (
                         <DropdownMenu>
-                            <DropdownMenuTrigger className={buttonVariants({ variant: "ghost", size: "sm" })}>
-                                {user.name}
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" className="h-full p-0">
+                                    <div className="flex size-9 items-center justify-center rounded-md bg-primary text-primary-foreground text-sm font-medium">
+                                        {user.name.charAt(0).toUpperCase()}
+                                    </div>
+                                </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
+                            <DropdownMenuContent align="end" className="w-56">
+                                <DropdownMenuLabel>
+                                    <div className="flex flex-col">
+                                        <span className="text-sm font-medium">{user.name}</span>
+                                        <span className="text-xs text-muted-foreground">
+                      {user.email}
+                    </span>
+                                    </div>
+                                </DropdownMenuLabel>
+                                <DropdownMenuSeparator />
                                 <DropdownMenuItem onClick={() => router.push("/profile")}>
-                                    Perfil
+                                    <Settings className="mr-2 size-4" />
+                                    Meu Perfil
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem
-                                    variant="destructive"
                                     onClick={handleLogout}
+                                    className="text-destructive focus:text-destructive"
                                 >
+                                    <LogOut className="mr-2 size-4" />
                                     Sair
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
                     ) : (
-                        <div className="flex gap-2">
-                            <Link href="/login" className={buttonVariants({ variant: "outline", size: "sm" })}>
-                                Login
-                            </Link>
-                            <Link href="/register" className={buttonVariants({ size: "sm" })}>
-                                Registrar
-                            </Link>
+                        <div className="flex items-center gap-2">
+                            <Button variant="ghost" size="sm" asChild>
+                                <Link href="/login">Login</Link>
+                            </Button>
+                            <Button size="sm" asChild>
+                                <Link href="/register">Registrar</Link>
+                            </Button>
                         </div>
                     )}
                 </div>
             </div>
-        </nav>
+
+            {/* Nav mobile */}
+            {mobileOpen && (
+                <div className="border-t px-4 py-3 xl:hidden">
+                    <nav className="flex flex-col gap-1">{navLinks}</nav>
+                </div>
+            )}
+        </header>
     );
 }
