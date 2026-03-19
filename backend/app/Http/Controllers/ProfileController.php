@@ -4,9 +4,30 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\{JsonResponse, Request};
 use Illuminate\Support\Facades\Hash;
+use OpenApi\Attributes as OA;
 
 class ProfileController extends Controller
 {
+    #[OA\Put(
+        path: '/api/profile',
+        tags: ['Profile'],
+        summary: 'Atualizar perfil do usuário autenticado',
+        security: [['sanctum' => []]],
+        requestBody: new OA\RequestBody(
+            content: new OA\JsonContent(properties: [
+                new OA\Property(property: 'name', type: 'string', example: 'João Silva'),
+                new OA\Property(property: 'email', type: 'string', format: 'email', example: 'joao@email.com'),
+                new OA\Property(property: 'current_password', type: 'string', example: 'password@123'),
+                new OA\Property(property: 'password', type: 'string', minLength: 8, example: 'novaSenha@123'),
+                new OA\Property(property: 'password_confirmation', type: 'string', example: 'novaSenha@123'),
+            ])
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Perfil atualizado'),
+            new OA\Response(response: 422, description: 'Erro de validação'),
+            new OA\Response(response: 401, description: 'Não autenticado'),
+        ]
+    )]
     public function __invoke(Request $request): JsonResponse
     {
         $request->validate([

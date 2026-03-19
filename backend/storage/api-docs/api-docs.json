@@ -1,0 +1,781 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Brasileirão API",
+        "description": "API REST para o sistema do Campeonato Brasileiro Série A",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000",
+            "description": "Servidor local"
+        }
+    ],
+    "paths": {
+        "/api/admin/games": {
+            "get": {
+                "tags": [
+                    "Admin - Games"
+                ],
+                "summary": "Listar jogos com paginação e filtros",
+                "operationId": "ad55ab816bcc78797ac1f3c1c788cb37",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "team",
+                        "in": "query",
+                        "description": "Filtrar por nome do time",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "date_from",
+                        "in": "query",
+                        "description": "Data inicial (Y-m-d)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "date_to",
+                        "in": "query",
+                        "description": "Data final (Y-m-d)",
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista paginada de jogos"
+                    },
+                    "403": {
+                        "description": "Acesso negado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Admin - Games"
+                ],
+                "summary": "Criar jogo",
+                "operationId": "d48c42d59c4dbd68a4cbe9b7ca96856e",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "home_team_id",
+                                    "away_team_id",
+                                    "game_date"
+                                ],
+                                "properties": {
+                                    "home_team_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "away_team_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "game_date": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2026-05-10 16:00:00"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Jogo criado"
+                    },
+                    "422": {
+                        "description": "Erro de validação"
+                    },
+                    "403": {
+                        "description": "Acesso negado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/games/{id}/score": {
+            "patch": {
+                "tags": [
+                    "Admin - Games"
+                ],
+                "summary": "Lançar placar do jogo",
+                "operationId": "0876ddd7cf2ccfd441e0506e19917ff5",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "home_score",
+                                    "away_score"
+                                ],
+                                "properties": {
+                                    "home_score": {
+                                        "type": "integer",
+                                        "example": 2,
+                                        "minimum": 0
+                                    },
+                                    "away_score": {
+                                        "type": "integer",
+                                        "example": 1,
+                                        "minimum": 0
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Placar registrado, status muda para realizado"
+                    },
+                    "404": {
+                        "description": "Jogo não encontrado"
+                    },
+                    "422": {
+                        "description": "Erro de validação"
+                    },
+                    "403": {
+                        "description": "Acesso negado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/games/{id}": {
+            "delete": {
+                "tags": [
+                    "Admin - Games"
+                ],
+                "summary": "Excluir jogo (apenas realizados nos últimos 3 dias)",
+                "operationId": "f250a7e076889da52490e481d15931b8",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Jogo removido"
+                    },
+                    "403": {
+                        "description": "Exclusão não permitida ou acesso negado"
+                    },
+                    "404": {
+                        "description": "Jogo não encontrado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/teams": {
+            "get": {
+                "tags": [
+                    "Admin - Teams"
+                ],
+                "summary": "Listar todos os times",
+                "operationId": "764f07b4be9872117aef38607cdfb26b",
+                "responses": {
+                    "200": {
+                        "description": "Lista de times"
+                    },
+                    "403": {
+                        "description": "Acesso negado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Admin - Teams"
+                ],
+                "summary": "Criar time",
+                "operationId": "225d7a32d9d6b773a1a5a9e183e4c42d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "short_name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Flamengo"
+                                    },
+                                    "short_name": {
+                                        "type": "string",
+                                        "example": "FLA",
+                                        "maxLength": 3
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Time criado"
+                    },
+                    "422": {
+                        "description": "Erro de validação"
+                    },
+                    "403": {
+                        "description": "Acesso negado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/teams/{id}": {
+            "get": {
+                "tags": [
+                    "Admin - Teams"
+                ],
+                "summary": "Detalhe do time",
+                "operationId": "2382f6da05826836ee760173ed984cc7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Time encontrado"
+                    },
+                    "404": {
+                        "description": "Time não encontrado"
+                    },
+                    "403": {
+                        "description": "Acesso negado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Admin - Teams"
+                ],
+                "summary": "Editar time",
+                "operationId": "683dfa490cef21f8f47d42dbc1735f12",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "short_name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Flamengo"
+                                    },
+                                    "short_name": {
+                                        "type": "string",
+                                        "example": "FLA",
+                                        "maxLength": 3
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Time atualizado"
+                    },
+                    "404": {
+                        "description": "Time não encontrado"
+                    },
+                    "403": {
+                        "description": "Acesso negado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Admin - Teams"
+                ],
+                "summary": "Excluir time",
+                "operationId": "566af7ebe9ef0e66ed293914a8d523ad",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Time removido"
+                    },
+                    "404": {
+                        "description": "Time não encontrado"
+                    },
+                    "403": {
+                        "description": "Acesso negado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Autenticar usuário",
+                "operationId": "09c1cdfe33bfbe0710861ac50c0adaec",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "admin@brasileirao.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password@123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login realizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer"
+                                                },
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "email": {
+                                                    "type": "string"
+                                                },
+                                                "role": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "admin",
+                                                        "user"
+                                                    ]
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "token": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Credenciais inválidas"
+                    }
+                }
+            }
+        },
+        "/api/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Encerrar sessão",
+                "operationId": "d3a6563e6beaaee3fed81b12fe1151fe",
+                "responses": {
+                    "200": {
+                        "description": "Logout realizado"
+                    },
+                    "401": {
+                        "description": "Não autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/refresh": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Renovar token de acesso",
+                "operationId": "8ab341bd79c099019fe4f7f368ba61e0",
+                "responses": {
+                    "200": {
+                        "description": "Token renovado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "token": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Não autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Registrar novo usuário",
+                "operationId": "08895790736612da345bc0606cefe61b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "João Silva"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "joao@email.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password@123",
+                                        "minLength": 8
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "example": "password@123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Usuário criado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer"
+                                                },
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "email": {
+                                                    "type": "string"
+                                                },
+                                                "role": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "admin",
+                                                        "user"
+                                                    ]
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "token": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Erro de validação"
+                    }
+                }
+            }
+        },
+        "/api/profile": {
+            "put": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Atualizar perfil do usuário autenticado",
+                "operationId": "226f2afae3c4a079d6f59ec313c0ceaf",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "João Silva"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "joao@email.com"
+                                    },
+                                    "current_password": {
+                                        "type": "string",
+                                        "example": "password@123"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "novaSenha@123",
+                                        "minLength": 8
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "example": "novaSenha@123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Perfil atualizado"
+                    },
+                    "422": {
+                        "description": "Erro de validação"
+                    },
+                    "401": {
+                        "description": "Não autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/standings": {
+            "get": {
+                "tags": [
+                    "Standings"
+                ],
+                "summary": "Tabela de classificação (pública)",
+                "operationId": "db34967af3b160bc58528ec32c08f1fb",
+                "responses": {
+                    "200": {
+                        "description": "Classificação ordenada por pontos, saldo de gols e gols pró",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "team": {
+                                                "type": "string"
+                                            },
+                                            "points": {
+                                                "type": "integer"
+                                            },
+                                            "games": {
+                                                "type": "integer"
+                                            },
+                                            "wins": {
+                                                "type": "integer"
+                                            },
+                                            "draws": {
+                                                "type": "integer"
+                                            },
+                                            "losses": {
+                                                "type": "integer"
+                                            },
+                                            "goals_for": {
+                                                "type": "integer"
+                                            },
+                                            "goals_against": {
+                                                "type": "integer"
+                                            },
+                                            "goal_difference": {
+                                                "type": "integer"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "sanctum": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Autenticação"
+        },
+        {
+            "name": "Profile",
+            "description": "Perfil do usuário"
+        },
+        {
+            "name": "Standings",
+            "description": "Tabela de classificação"
+        },
+        {
+            "name": "Admin - Teams",
+            "description": "Gerenciamento de times (admin)"
+        },
+        {
+            "name": "Admin - Games",
+            "description": "Gerenciamento de jogos (admin)"
+        }
+    ]
+}

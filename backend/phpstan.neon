@@ -14,8 +14,8 @@ parameters:
     # accessors no estilo novo (Attribute::make) para essa regra.
     checkModelAppends: false
 
-#    ignoreErrors:
-#        - '#PHPDoc tag @var#'
-#
+    ignoreErrors:
+        - '#Constant L5_SWAGGER_CONST_HOST not found\.#'
+
 #    excludePaths:
 #        - ./*/*/FileToBeExcluded.php

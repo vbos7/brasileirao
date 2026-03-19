@@ -4,9 +4,35 @@ namespace App\Http\Controllers;
 
 use App\Models\{Game};
 use Illuminate\Http\JsonResponse;
+use OpenApi\Attributes as OA;
 
 class StandingsController extends Controller
 {
+    #[OA\Get(
+        path: '/api/standings',
+        tags: ['Standings'],
+        summary: 'Tabela de classificação (pública)',
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Classificação ordenada por pontos, saldo de gols e gols pró',
+                content: new OA\JsonContent(
+                    type: 'array',
+                    items: new OA\Items(properties: [
+                        new OA\Property(property: 'team', type: 'string'),
+                        new OA\Property(property: 'points', type: 'integer'),
+                        new OA\Property(property: 'games', type: 'integer'),
+                        new OA\Property(property: 'wins', type: 'integer'),
+                        new OA\Property(property: 'draws', type: 'integer'),
+                        new OA\Property(property: 'losses', type: 'integer'),
+                        new OA\Property(property: 'goals_for', type: 'integer'),
+                        new OA\Property(property: 'goals_against', type: 'integer'),
+                        new OA\Property(property: 'goal_difference', type: 'integer'),
+                    ])
+                )
+            ),
+        ]
+    )]
     public function __invoke(): JsonResponse
     {
         // busca apenas jogos finalizados com os times relacionados
