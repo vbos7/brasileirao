@@ -5,6 +5,12 @@ export interface User {
     role: "admin" | "user";
 }
 
+export interface Team {
+    id: number;
+    name: string;
+    short_name: string;
+}
+
 export interface Standing {
     team: string;
     points: number;
