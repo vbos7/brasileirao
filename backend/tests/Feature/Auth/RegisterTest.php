@@ -19,7 +19,7 @@ it('should be able to register a new user', function () {
     // verifica que a API retornou 201 e o JSON tem a estrutura esperada
     $response->assertStatus(201)
         ->assertJsonStructure([
-            'user' => ['id', 'name', 'email'],
+            'user' => ['id', 'name', 'email', 'role'],
             'token', // token Sanctum para autenticação
         ]);
 

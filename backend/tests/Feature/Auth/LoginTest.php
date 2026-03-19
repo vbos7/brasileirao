@@ -14,7 +14,7 @@ it('should be able to login with valid credentials', function () {
 
     $response->assertOk()
         ->assertJsonStructure([
-            'user' => ['id', 'name', 'email'],
+            'user' => ['id', 'name', 'email', 'role'],
             'token',
         ]);
 });
