@@ -31,7 +31,7 @@ class LoginController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
-            'user'  => $user->only('id', 'name', 'email'),
+            'user'  => $user->only('id', 'name', 'email', 'role'),
             'token' => $token,
         ]);
     }
