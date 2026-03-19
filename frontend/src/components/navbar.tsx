@@ -6,7 +6,7 @@ import { useRouter, usePathname } from "next/navigation";
 import Cookies from "js-cookie";
 import api from "@/lib/api";
 import { User } from "@/types";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -37,13 +37,19 @@ export default function Navbar() {
     const [user, setUser] = useState<User | null>(null);
 
     useEffect(() => {
-        try {
-            const stored = Cookies.get("user");
-            setUser(stored ? JSON.parse(stored) : null);
-        } catch {
-            Cookies.remove("user");
-            setUser(null);
+        function syncUser() {
+            try {
+                const stored = Cookies.get("user");
+                setUser(stored ? JSON.parse(stored) : null);
+            } catch {
+                Cookies.remove("user");
+                setUser(null);
+            }
         }
+
+        syncUser();
+        window.addEventListener("user-updated", syncUser);
+        return () => window.removeEventListener("user-updated", syncUser);
     }, [pathname]);
 
     async function handleLogout() {

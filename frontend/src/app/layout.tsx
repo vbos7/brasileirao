@@ -31,7 +31,7 @@ export default function RootLayout({
       >
           <Navbar />
           <main>{children}</main>
-          <Toaster position="top-right" richColors />
+          <Toaster position="bottom-right"  />
       </body>
     </html>
   );
