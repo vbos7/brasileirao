@@ -16,13 +16,13 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-    Shield,
-    Swords,
-    User as UserIcon,
-    LogOut,
-    Settings,
-    Menu, BookOpen,
-} from "lucide-react";
+    Sheet,
+    SheetContent,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from "@/components/ui/sheet";
+import { LogOut, Settings, Menu, BookOpen } from "lucide-react";
 
 const AUTH_ROUTES = ["/login", "/register"];
 
@@ -30,7 +30,7 @@ export default function Navbar() {
     const router = useRouter();
     const pathname = usePathname();
     const [user, setUser] = useState<User | null>(null);
-    const [mobileOpen, setMobileOpen] = useState(false);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
     useEffect(() => {
         function syncUser() {
@@ -69,49 +69,72 @@ export default function Navbar() {
             isActive(path) ? "bg-accent/50 text-accent-foreground" : "text-muted-foreground"
         }`;
 
-    const navLinks = (
-        <>
-            <Link href="/" className={linkClass("/")}>
-                Classificação
-            </Link>
-            {user?.role === "admin" && (
-                <>
-                    <Link href="/admin/teams" className={linkClass("/admin/teams")}>
-                        Times
-                    </Link>
-                    <Link href="/admin/games" className={linkClass("/admin/games")}>
-                        Jogos
-                    </Link>
-                </>
-            )}
-        </>
-    );
+    const mobileLinkClass = (path: string) =>
+        `flex items-center gap-3 rounded-md px-3 py-3 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground ${
+            isActive(path) ? "bg-accent text-accent-foreground" : "text-foreground"
+        }`;
+
+    function NavLinks({ mobile = false }: { mobile?: boolean }) {
+        const cls = mobile ? mobileLinkClass : linkClass;
+        const onClick = mobile ? () => setSidebarOpen(false) : undefined;
+
+        return (
+            <>
+                <Link href="/" className={cls("/")} onClick={onClick}>
+                    Classificação
+                </Link>
+                {user?.role === "admin" && (
+                    <>
+                        <Link href="/admin/teams" className={cls("/admin/teams")} onClick={onClick}>
+                            Times
+                        </Link>
+                        <Link href="/admin/games" className={cls("/admin/games")} onClick={onClick}>
+                            Jogos
+                        </Link>
+                    </>
+                )}
+            </>
+        );
+    }
 
     return (
         <header className="bg-card sticky top-0 z-50 border-b">
             <div className="mx-auto flex max-w-5xl items-center justify-between gap-6 px-4 py-3 sm:px-6">
-                {/* Logo + mobile menu */}
+                {/* Logo + mobile menu trigger */}
                 <div className="flex items-center gap-4">
-                    <Button
-                        variant="outline"
-                        size="icon"
-                        className="inline-flex xl:hidden"
-                        onClick={() => setMobileOpen(!mobileOpen)}
-                    >
-                        <Menu className="size-4" />
-                        <span className="sr-only">Menu</span>
-                    </Button>
+                    <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
+                        <SheetTrigger asChild>
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                className="inline-flex xl:hidden"
+                            >
+                                <Menu className="size-4" />
+                                <span className="sr-only">Menu</span>
+                            </Button>
+                        </SheetTrigger>
+                        <SheetContent side="left" className="w-64 p-0">
+                            <SheetHeader className="border-b px-6 py-4">
+                                <SheetTitle className="flex items-center gap-2 text-left">
+                                    <img src="/logo.png" alt="Brasileirão" className="size-5" />
+                                    Brasileirão
+                                </SheetTitle>
+                            </SheetHeader>
+                            <nav className="flex flex-col gap-1 p-4">
+                                <NavLinks mobile />
+                            </nav>
+                        </SheetContent>
+                    </Sheet>
+
                     <Link href="/" className="flex items-center gap-2">
                         <img src="/logo.png" alt="Brasileirão" className="size-6" />
-                        <span className="hidden text-xl font-semibold sm:block">
-              Brasileirão
-            </span>
+                        <span className="hidden text-xl font-semibold sm:block">Brasileirão</span>
                     </Link>
                 </div>
 
                 {/* Nav desktop */}
                 <nav className="hidden flex-1 items-center gap-1 xl:flex">
-                    {navLinks}
+                    <NavLinks />
                 </nav>
 
                 {/* Right side */}
@@ -129,9 +152,7 @@ export default function Navbar() {
                                 <DropdownMenuLabel>
                                     <div className="flex flex-col">
                                         <span className="text-sm font-medium">{user.name}</span>
-                                        <span className="text-xs text-muted-foreground">
-                      {user.email}
-                    </span>
+                                        <span className="text-xs text-muted-foreground">{user.email}</span>
                                     </div>
                                 </DropdownMenuLabel>
                                 <DropdownMenuSeparator />
@@ -166,13 +187,6 @@ export default function Navbar() {
                     )}
                 </div>
             </div>
-
-            {/* Nav mobile */}
-            {mobileOpen && (
-                <div className="border-t px-4 py-3 xl:hidden">
-                    <nav className="flex flex-col gap-1">{navLinks}</nav>
-                </div>
-            )}
         </header>
     );
 }
