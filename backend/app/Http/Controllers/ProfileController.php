@@ -17,14 +17,26 @@ class ProfileController extends Controller
             content: new OA\JsonContent(properties: [
                 new OA\Property(property: 'name', type: 'string', example: 'João Silva'),
                 new OA\Property(property: 'email', type: 'string', format: 'email', example: 'joao@email.com'),
-                new OA\Property(property: 'current_password', type: 'string', example: 'password@123'),
+                new OA\Property(property: 'current_password', type: 'string', description: 'Obrigatório quando `password` é enviado', example: 'password@123'),
                 new OA\Property(property: 'password', type: 'string', minLength: 8, example: 'novaSenha@123'),
-                new OA\Property(property: 'password_confirmation', type: 'string', example: 'novaSenha@123'),
+                new OA\Property(property: 'password_confirmation', type: 'string', description: 'Deve ser igual a `password`', example: 'novaSenha@123'),
             ])
         ),
         responses: [
-            new OA\Response(response: 200, description: 'Perfil atualizado'),
-            new OA\Response(response: 422, description: 'Erro de validação'),
+            new OA\Response(
+                response: 200,
+                description: 'Perfil atualizado. Quando a senha é alterada, um novo token é emitido e o campo `token` é retornado.',
+                content: new OA\JsonContent(properties: [
+                    new OA\Property(property: 'user', properties: [
+                        new OA\Property(property: 'id', type: 'integer', example: 1),
+                        new OA\Property(property: 'name', type: 'string', example: 'João Silva'),
+                        new OA\Property(property: 'email', type: 'string', format: 'email', example: 'joao@email.com'),
+                        new OA\Property(property: 'role', type: 'string', enum: ['admin', 'user'], example: 'user'),
+                    ], type: 'object'),
+                    new OA\Property(property: 'token', type: 'string', nullable: true, description: 'Novo token emitido apenas quando a senha é alterada', example: '1|abc...'),
+                ])
+            ),
+            new OA\Response(response: 422, description: 'Erro de validação (incluindo senha atual incorreta)'),
             new OA\Response(response: 401, description: 'Não autenticado'),
         ]
     )]

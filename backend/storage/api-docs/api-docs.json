@@ -657,6 +657,7 @@
                                         "example": "joao@email.com"
                                     },
                                     "current_password": {
+                                        "description": "Obrigatório quando `password` é enviado",
                                         "type": "string",
                                         "example": "password@123"
                                     },
@@ -666,6 +667,7 @@
                                         "minLength": 8
                                     },
                                     "password_confirmation": {
+                                        "description": "Deve ser igual a `password`",
                                         "type": "string",
                                         "example": "novaSenha@123"
                                     }
@@ -677,10 +679,51 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Perfil atualizado"
+                        "description": "Perfil atualizado. Quando a senha é alterada, um novo token é emitido e o campo `token` é retornado.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "João Silva"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "format": "email",
+                                                    "example": "joao@email.com"
+                                                },
+                                                "role": {
+                                                    "type": "string",
+                                                    "example": "user",
+                                                    "enum": [
+                                                        "admin",
+                                                        "user"
+                                                    ]
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "token": {
+                                            "description": "Novo token emitido apenas quando a senha é alterada",
+                                            "type": "string",
+                                            "example": "1|abc...",
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
                     "422": {
-                        "description": "Erro de validação"
+                        "description": "Erro de validação (incluindo senha atual incorreta)"
                     },
                     "401": {
                         "description": "Não autenticado"
