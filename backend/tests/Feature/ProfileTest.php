@@ -54,3 +54,21 @@ it('unauthenticated user should not access profile', function () {
 
     $response->assertStatus(401);
 });
+
+it('changing password revokes all existing tokens and returns a new one', function () {
+    $user     = User::factory()->create();
+    $oldToken = $user->createToken('old_token')->plainTextToken;
+
+    $response = actingAs($user)
+        ->putJson('/api/profile', [
+            'current_password'      => 'password@123',
+            'password'              => 'newPassword@123',
+            'password_confirmation' => 'newPassword@123',
+        ]);
+
+    $response->assertOk()
+        ->assertJsonStructure(['user', 'token']);
+
+    expect($user->tokens()->count())->toBe(1)
+        ->and($response->json('token'))->not->toBe($oldToken);
+});
