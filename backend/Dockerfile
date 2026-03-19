@@ -1,4 +1,4 @@
-FROM php:8.4-cli
+FROM php:8.4-fpm
 
 RUN apt-get update && apt-get install -y \
     git \
@@ -17,8 +17,10 @@ WORKDIR /var/www/html
 
 COPY . .
 
-RUN if [ -f composer.json ]; then composer install --no-interaction --optimize-autoloader; fi
+RUN if [ -f composer.json ]; then composer install --no-interaction --optimize-autoloader --no-dev; fi
 
-EXPOSE 8000
+RUN chown -R www-data:www-data storage bootstrap/cache
 
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+EXPOSE 9000
+
+CMD ["php-fpm"]
