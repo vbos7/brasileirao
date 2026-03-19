@@ -21,7 +21,17 @@ api.interceptors.response.use(
     (response) => response,
     (error) => {
         const status = error.response?.status;
-        const message = error.response?.data?.message || "Erro inesperado.";
+        const serverMessage = error.response?.data?.message;
+
+        const friendlyMessages: Record<number, string> = {
+            401: "Sessão expirada. Faça login novamente.",
+            403: "Acesso negado. Você não tem permissão para realizar esta ação.",
+            404: "Recurso não encontrado.",
+            429: "Muitas tentativas. Aguarde um momento e tente novamente.",
+            500: "Erro interno no servidor. Tente novamente mais tarde.",
+        };
+
+        const message = serverMessage || friendlyMessages[status ?? 0] || "Erro inesperado.";
 
         if (status === 401 && typeof window !== "undefined") {
             const isAuthPage = ["/login", "/register"].includes(window.location.pathname);
