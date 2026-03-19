@@ -54,6 +54,19 @@ class ProfileController extends Controller
 
         $request->user()->update($data);
 
-        return response()->json($request->user()->fresh());
+        // troca de senha invalida todos os tokens existentes e emite um novo
+        if ($request->filled('password')) {
+            $request->user()->tokens()->delete();
+            $token = $request->user()->createToken('auth_token')->plainTextToken;
+
+            return response()->json([
+                'user'  => $request->user()->fresh()->only('id', 'name', 'email', 'role'),
+                'token' => $token,
+            ]);
+        }
+
+        return response()->json([
+            'user' => $request->user()->fresh()->only('id', 'name', 'email', 'role'),
+        ]);
     }
 }
