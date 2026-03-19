@@ -49,8 +49,8 @@ type GameForm = z.infer<typeof gameSchema>;
 
 // Schema lançar placar
 const scoreSchema = z.object({
-    home_score: z.number({ coerce: true }).min(0, "Mínimo 0"),
-    away_score: z.number({ coerce: true }).min(0, "Mínimo 0"),
+    home_score: z.number().min(0, "Mínimo 0"),
+    away_score: z.number().min(0, "Mínimo 0"),
 });
 
 type ScoreForm = z.infer<typeof scoreSchema>;
@@ -105,7 +105,9 @@ export default function GamesPage() {
         try {
             const response = await api.get("/admin/teams");
             setTeams(response.data);
-        } catch {}
+        } catch {
+            toast.error("Erro ao carregar times.");
+        }
     }, []);
 
     useEffect(() => {
@@ -430,7 +432,7 @@ export default function GamesPage() {
                                     <Input
                                         type="number"
                                         min={0}
-                                        {...scoreForm.register("home_score")}
+                                        {...scoreForm.register("home_score", { valueAsNumber: true })}
                                     />
                                     {scoreForm.formState.errors.home_score && (
                                         <p className="text-sm text-destructive">
@@ -443,7 +445,7 @@ export default function GamesPage() {
                                     <Input
                                         type="number"
                                         min={0}
-                                        {...scoreForm.register("away_score")}
+                                        {...scoreForm.register("away_score", { valueAsNumber: true })}
                                     />
                                     {scoreForm.formState.errors.away_score && (
                                         <p className="text-sm text-destructive">
