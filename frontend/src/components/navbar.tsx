@@ -21,7 +21,7 @@ import {
     User as UserIcon,
     LogOut,
     Settings,
-    Menu,
+    Menu, BookOpen,
 } from "lucide-react";
 
 const AUTH_ROUTES = ["/login", "/register"];
@@ -138,6 +138,11 @@ export default function Navbar() {
                                 <DropdownMenuItem onClick={() => router.push("/profile")}>
                                     <Settings className="mr-2 size-4" />
                                     Meu Perfil
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem onClick={() => window.open(`${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ?? "http://localhost:8000"}/api/documentation`, "_blank")}>
+                                    <BookOpen className="mr-2 size-4" />
+                                    Documentação
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem
