@@ -29,7 +29,7 @@ class GameController extends Controller
             $query->where('game_date', '<=', $request->date_to . ' 23:59:59');
         }
 
-        $games = $query->paginate(15);
+        $games = $query->with(['homeTeam', 'awayTeam'])->paginate(15);
 
         // formata a paginação no padrão esperado pela API
         return response()->json([
