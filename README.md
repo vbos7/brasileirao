@@ -36,10 +36,10 @@ cp backend/.env.example backend/.env
 # DB_PASSWORD=secret
 
 # 4. Subir os containers
-docker-compose up --build
+docker compose up --build -d
 
-# 5. Em outro terminal, rodar migrations e seed
-docker exec -it brasileirao-backend php artisan migrate --seed
+# 5. Rodar migrations e seed
+docker compose exec backend php artisan migrate:fresh --seed
 
 # 6. Acessar
 # Frontend: http://localhost:3000
@@ -97,7 +97,11 @@ docker exec -it brasileirao-backend php artisan migrate --seed
 
 ## Documentação da API (Swagger)
 
-Após subir o projeto, acesse:
+Após subir o projeto, gere a documentação e acesse:
+
+```bash
+docker compose exec backend php artisan l5-swagger:generate
+```
 
 ```
 http://localhost:8000/api/documentation
@@ -106,8 +110,7 @@ http://localhost:8000/api/documentation
 ## Rodando os testes
 
 ```bash
-cd backend
-php artisan test
+docker compose exec backend php artisan test
 ```
 
 ## Estrutura do projeto
