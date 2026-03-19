@@ -1,65 +1,117 @@
-import Image from "next/image";
+"use client";
+
+import { useEffect, useState } from "react";
+import api from "@/lib/api";
+import { Standing } from "@/types";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 export default function Home() {
+  const [standings, setStandings] = useState<Standing[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    api
+        .get("/standings")
+        .then((res) => setStandings(res.data))
+        .catch(() => {})
+        .finally(() => setLoading(false));
+  }, []);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+      <div className="min-h-screen bg-background p-4 md:p-8">
+        <div className="mx-auto max-w-5xl">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold">
+                Campeonato Brasileiro Série A
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Tabela de classificação
+              </p>
+            </CardHeader>
+            <CardContent>
+              {loading ? (
+                  <p className="text-center py-8 text-muted-foreground">
+                    Carregando...
+                  </p>
+              ) : standings.length === 0 ? (
+                  <p className="text-center py-8 text-muted-foreground">
+                    Nenhum jogo realizado ainda.
+                  </p>
+              ) : (
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="w-12 text-center">#</TableHead>
+                          <TableHead>Time</TableHead>
+                          <TableHead className="text-center">P</TableHead>
+                          <TableHead className="text-center">J</TableHead>
+                          <TableHead className="text-center">V</TableHead>
+                          <TableHead className="text-center">E</TableHead>
+                          <TableHead className="text-center">D</TableHead>
+                          <TableHead className="text-center">GP</TableHead>
+                          <TableHead className="text-center">GC</TableHead>
+                          <TableHead className="text-center">SG</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {standings.map((team, index) => (
+                            <TableRow key={team.team}>
+                              <TableCell className="text-center font-medium">
+                                {index < 4 ? (
+                                    <Badge variant="default">{index + 1}</Badge>
+                                ) : index >= standings.length - 4 ? (
+                                    <Badge variant="destructive">{index + 1}</Badge>
+                                ) : (
+                                    index + 1
+                                )}
+                              </TableCell>
+                              <TableCell className="font-medium">
+                                {team.team}
+                              </TableCell>
+                              <TableCell className="text-center font-bold">
+                                {team.points}
+                              </TableCell>
+                              <TableCell className="text-center">
+                                {team.games}
+                              </TableCell>
+                              <TableCell className="text-center">
+                                {team.wins}
+                              </TableCell>
+                              <TableCell className="text-center">
+                                {team.draws}
+                              </TableCell>
+                              <TableCell className="text-center">
+                                {team.losses}
+                              </TableCell>
+                              <TableCell className="text-center">
+                                {team.goals_for}
+                              </TableCell>
+                              <TableCell className="text-center">
+                                {team.goals_against}
+                              </TableCell>
+                              <TableCell className="text-center">
+                                {team.goal_difference}
+                              </TableCell>
+                            </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      </div>
   );
 }
