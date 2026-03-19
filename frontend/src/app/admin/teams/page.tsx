@@ -27,7 +27,7 @@ import {
 
 const teamSchema = z.object({
     name: z.string().min(1, "Nome obrigatório"),
-    short_name: z.string().max(5, "Máximo 5 caracteres").optional().or(z.literal("")),
+    short_name: z.string().min(1, "Sigla obrigatória").max(3, "Máximo 3 caracteres"),
 });
 
 type TeamForm = z.infer<typeof teamSchema>;
@@ -178,7 +178,7 @@ export default function TeamsPage() {
                                 <Input
                                     id="short_name"
                                     placeholder="Ex: FLA"
-                                    maxLength={5}
+                                    maxLength={3}
                                     {...register("short_name")}
                                 />
                                 {errors.short_name && (
