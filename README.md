@@ -4,11 +4,11 @@ Sistema Full Stack que simula o Campeonato Brasileiro Série A, permitindo a lis
 
 ## Tecnologias
 
-**Backend:** Laravel 12, PHP 8.3+, MySQL 8, Laravel Sanctum (autenticação via token)
+**Backend:** Laravel 13, PHP 8.4+, MySQL 8, Laravel Sanctum (autenticação via token)
 
-**Frontend:** Next.js 15, TypeScript, TailwindCSS, shadcn/ui, React Hook Form, Zod
+**Frontend:** Next.js 16, TypeScript, TailwindCSS, shadcn/ui, React Hook Form, Zod
 
-**Testes:** Pest PHP
+**Testes:** Pest PHP (backend), Vitest + Testing Library (frontend)
 
 **Infraestrutura:** Docker, Docker Compose
 
@@ -109,22 +109,32 @@ http://localhost:8000/api/documentation
 
 ## Rodando os testes
 
+**Backend** (dentro do container):
 ```bash
 docker compose exec backend php artisan test
 ```
+
+**Frontend** (requer Node.js instalado localmente):
+```bash
+cd frontend
+npm test
+```
+
+Os testes de frontend também rodam automaticamente no pre-commit via Husky.
 
 ## Estrutura do projeto
 
 ```
 brasileirao/
-├── backend/           # Laravel 12 (API)
+├── backend/           # Laravel 13 (API)
 │   ├── app/
 │   ├── database/
 │   ├── routes/
 │   ├── tests/
 │   └── Dockerfile
-├── frontend/          # Next.js 15
+├── frontend/          # Next.js 16
 │   ├── src/
+│   │   ├── __tests__/
 │   │   ├── app/
 │   │   ├── components/
 │   │   ├── lib/
