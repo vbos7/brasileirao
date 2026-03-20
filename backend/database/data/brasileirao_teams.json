@@ -1,0 +1,29 @@
+{
+    "_meta": {
+        "title": "Times do Brasileirão Série A",
+        "updated_at": "2026-03-17",
+        "total": 20
+    },
+    "teams": [
+        { "name": "Atlético-MG",   "short_name": "CAM" },
+        { "name": "Athletico-PR",  "short_name": "CAP" },
+        { "name": "Bahia",         "short_name": "BAH" },
+        { "name": "Botafogo",      "short_name": "BOT" },
+        { "name": "Corinthians",   "short_name": "COR" },
+        { "name": "Cruzeiro",      "short_name": "CRU" },
+        { "name": "Flamengo",      "short_name": "FLA" },
+        { "name": "Fluminense",    "short_name": "FLU" },
+        { "name": "Fortaleza",     "short_name": "FOR" },
+        { "name": "Grêmio",        "short_name": "GRE" },
+        { "name": "Internacional", "short_name": "INT" },
+        { "name": "Juventude",     "short_name": "JUV" },
+        { "name": "Mirassol",      "short_name": "MIR" },
+        { "name": "Palmeiras",     "short_name": "PAL" },
+        { "name": "RB Bragantino", "short_name": "RBB" },
+        { "name": "Santos",        "short_name": "SAN" },
+        { "name": "São Paulo",     "short_name": "SAO" },
+        { "name": "Sport",         "short_name": "SPT" },
+        { "name": "Vasco",         "short_name": "VAS" },
+        { "name": "Vitória",       "short_name": "VIT" }
+    ]
+}

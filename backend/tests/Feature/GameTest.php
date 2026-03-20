@@ -130,7 +130,15 @@ it('admin should be able to list games with pagination', function () {
 
     $response->assertOk()
         ->assertJsonStructure([
-            'data',
+            'data' => [
+                '*' => [
+                    'id',
+                    'status',
+                    'game_date',
+                    'home_team' => ['id', 'name'],
+                    'away_team' => ['id', 'name'],
+                ],
+            ],
             'meta' => ['current_page', 'last_page', 'per_page', 'total'],
         ]);
 });

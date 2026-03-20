@@ -5,8 +5,11 @@ use App\Http\Controllers\Auth\{LoginController, LogoutController, RefreshTokenCo
 use App\Http\Controllers\{ProfileController, StandingsController};
 use Illuminate\Support\Facades\Route;
 
-Route::post('/register', RegisterController::class);
-Route::post('/login', LoginController::class);
+Route::middleware('throttle:10,1')->group(function () {
+    Route::post('/register', RegisterController::class);
+    Route::post('/login', LoginController::class);
+});
+
 Route::get('/standings', StandingsController::class);
 
 Route::middleware('auth:sanctum')->group(function () {
