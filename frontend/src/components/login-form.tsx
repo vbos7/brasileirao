@@ -57,7 +57,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
         <div className={cn("flex flex-col gap-6", className)} {...props}>
             <Card className="overflow-hidden p-0">
                 <CardContent className="grid p-0 md:grid-cols-2">
-                    <form className="p-6 md:p-8" onSubmit={handleSubmit(onSubmit)}>
+                    <form className="p-6 md:p-8" onSubmit={handleSubmit(onSubmit)} noValidate>
                         <FieldGroup>
                             <div className="flex flex-col items-center gap-2 text-center">
                                 <h1 className="text-2xl font-bold">Bem-vindo de volta!</h1>
@@ -79,19 +79,19 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                                     {...register("email")}
                                 />
                                 {errors.email && (
-                                    <p className="text-sm text-destructive">{errors.email.message}</p>
+                                    <p className="text-sm text-destructive">
+                                        {errors.email.message}
+                                    </p>
                                 )}
                             </Field>
 
                             <Field>
                                 <FieldLabel htmlFor="password">Senha</FieldLabel>
-                                <Input
-                                    id="password"
-                                    type="password"
-                                    {...register("password")}
-                                />
+                                <Input id="password" type="password" {...register("password")} />
                                 {errors.password && (
-                                    <p className="text-sm text-destructive">{errors.password.message}</p>
+                                    <p className="text-sm text-destructive">
+                                        {errors.password.message}
+                                    </p>
                                 )}
                             </Field>
 
