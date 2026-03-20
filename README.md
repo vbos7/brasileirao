@@ -24,24 +24,16 @@ Sistema Full Stack que simula o Campeonato Brasileiro Série A, permitindo a lis
 git clone https://github.com/vbos7/brasileirao.git
 cd brasileirao
 
-# 2. Copiar o .env do backend
+# 2. Copiar o .env do backend (já vem configurado para o docker-compose)
 cp backend/.env.example backend/.env
 
-# 3. Configurar o .env do backend com as credenciais do banco
-# DB_CONNECTION=mysql
-# DB_HOST=mysql
-# DB_PORT=3306
-# DB_DATABASE=brasileirao
-# DB_USERNAME=laravel
-# DB_PASSWORD=secret
-
-# 4. Subir os containers
+# 3. Subir os containers
 docker compose up --build -d
 
-# 5. Rodar migrations e seed
+# 4. Rodar migrations e seed
 docker compose exec backend php artisan migrate:fresh --seed
 
-# 6. Acessar
+# 5. Acessar
 # Frontend: http://localhost:3000
 # API: http://localhost:8000/api
 ```
